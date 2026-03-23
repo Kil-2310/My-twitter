@@ -31,7 +31,7 @@ jobs:
         run: black --diff --check backend/app/
       
       - name: Lint
-        run: flake8 --config=backend\app\config_data\.flake8 backend/app/
+        run: flake8 --config=backend/app/config_data/.flake8 backend/app/
       
       - name: Run tests
         run: pytest backend/tests/
