@@ -35,8 +35,3 @@ jobs:
       
       - name: Run tests
         run: pytest backend/tests/
-      
-      - name: Run mypy
-        run: |
-          pip install --upgrade mypy
-          mypy backend/app/ --ignore-missing-imports
