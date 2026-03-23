@@ -11,6 +11,7 @@ node_modules
 
 # C extensions
 *.so
+*.db
 
 # Distribution / packaging
 .Python
