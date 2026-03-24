@@ -10,6 +10,7 @@ async def test_create_client_with_factory(db_session):
     # Создаем пользователя (синхронно)
     user = UserFactory.build()  # build() создает объект без сохранения
     
+    
     # Добавляем в сессию и сохраняем асинхронно
     db_session.add(user)
     await db_session.commit()
