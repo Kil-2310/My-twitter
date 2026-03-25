@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 
-from ..database.database import engine, Base, async_session
+from ..database import engine, Base, async_session
 from ..config_data.logger_config import logger
 
 
