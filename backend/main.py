@@ -1,4 +1,4 @@
-from .loader import app
+from backend.loader import app
 import uvicorn
 
 if __name__ == "__main__":

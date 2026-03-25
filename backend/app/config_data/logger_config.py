@@ -11,13 +11,13 @@ logger.add(
     level="DEBUG",
     rotation="10 MB",
     retention="30 days",
-    encoding="utf-8"
+    encoding="utf-8",
 )
 
 logger.add(
     lambda msg: print(msg, end=""),
     format="{time:HH:mm:ss} | {level} | {message}",
-    level="INFO"
+    level="INFO",
 )
 
-__all__ = ['logger']
+__all__ = ["logger"]
