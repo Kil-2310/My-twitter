@@ -22,6 +22,8 @@ class User(Base):
         primaryjoin="User.user_id == Follows.follower_id",
         secondaryjoin="User.user_id == Follows.following_id",
         back_populates="followers",
+        lazy="selectin",
+        cascade="save-update",
     )
 
     # кто читает меня
@@ -31,10 +33,24 @@ class User(Base):
         primaryjoin="User.user_id == Follows.following_id",
         secondaryjoin="User.user_id == Follows.follower_id",
         back_populates="following",
+        lazy="selectin",
+        cascade="save-update",
     )
 
-    media = relationship("Media", back_populates="uploader")
-    tweets = relationship("Tweets", back_populates="author")
+    likes = relationship(
+        "Likes",
+        back_populates="user",
+        lazy="selectin",
+        cascade="save-update, delete-orphan",
+    )
+
+    media = relationship(
+        "Media", back_populates="uploader", lazy="selectin", cascade="save-update"
+    )
+
+    tweets = relationship(
+        "Tweets", back_populates="author", lazy="selectin", cascade="save-update"
+    )
 
 
 class Follows(Base):
@@ -54,8 +70,17 @@ class Media(Base):
     uploaded_by = Column(Integer, ForeignKey("user.user_id"))
     created_at = Column(DateTime, nullable=False, default=datetime.now)
 
-    uploader = relationship("User", back_populates="media")
-    tweets = relationship("Tweets", secondary="tweet_media", back_populates="media")
+    uploader = relationship(
+        "User", back_populates="media", lazy="select", cascade="save-update"
+    )
+
+    tweets = relationship(
+        "Tweets",
+        secondary="tweet_media",
+        back_populates="media",
+        lazy="selectin",
+        cascade="save-update",
+    )
 
 
 class Tweets(Base):
@@ -66,8 +91,20 @@ class Tweets(Base):
     author_id = Column(Integer, ForeignKey("user.user_id"))
     created_at = Column(DateTime, nullable=False, default=datetime.now)
 
-    author = relationship("User", back_populates="tweets")
-    media = relationship("Media", secondary="tweet_media", back_populates="tweets")
+    author = relationship(
+        "User", back_populates="tweets", lazy="select", cascade="save-update"
+    )
+    media = relationship(
+        "Media",
+        secondary="tweet_media",
+        back_populates="tweets",
+        lazy="selectin",
+        cascade="save-update",
+    )
+
+    likes = relationship(
+        "Likes", back_populates="tweet", lazy="selectin", cascade="all, delete-orphan"
+    )
 
 
 class TweetMedia(Base):
@@ -83,3 +120,6 @@ class Likes(Base):
     tweet_id = Column(Integer, ForeignKey("tweets.tweet_id"), primary_key=True)
     user_id = Column(Integer, ForeignKey("user.user_id"), primary_key=True)
     created_at = Column(DateTime, default=datetime.now)
+
+    tweet = relationship("Tweets", back_populates="likes")
+    user = relationship("User", back_populates="likes")
