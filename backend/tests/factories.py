@@ -3,9 +3,7 @@ from datetime import datetime, timedelta
 
 import factory
 
-from backend.app.database.models import (
-    User, Follows, Media, Tweets, TweetMedia, Likes
-)
+from backend.app.database.models import User, Follows, Media, Tweets, TweetMedia, Likes
 
 
 class UserFactory(factory.alchemy.SQLAlchemyModelFactory):
@@ -45,9 +43,7 @@ class MediaFactory(factory.alchemy.SQLAlchemyModelFactory):
     file_name = factory.LazyAttribute(
         lambda obj: f"{factory.Faker('word').generate()}_{random.randint(1000, 9999)}.{random.choice(['jpg', 'png', 'gif', 'mp4'])}"
     )
-    file_path = factory.LazyAttribute(
-        lambda obj: f"/uploads/{obj.file_name}"
-    )
+    file_path = factory.LazyAttribute(lambda obj: f"/uploads/{obj.file_name}")
     uploaded_by = factory.SubFactory(UserFactory)
     created_at = factory.LazyFunction(
         lambda: datetime.now() - timedelta(days=random.randint(0, 60))
@@ -63,7 +59,8 @@ class TweetsFactory(factory.alchemy.SQLAlchemyModelFactory):
     content = factory.Faker("text", max_nb_chars=280)
     author_id = factory.SubFactory(UserFactory)
     created_at = factory.LazyFunction(
-        lambda: datetime.now() - timedelta(days=random.randint(0, 30), hours=random.randint(0, 23))
+        lambda: datetime.now()
+        - timedelta(days=random.randint(0, 30), hours=random.randint(0, 23))
     )
 
 
