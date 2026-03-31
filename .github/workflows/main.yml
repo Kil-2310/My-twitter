@@ -7,31 +7,26 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
       
-      - name: Set up Python
-        uses: actions/setup-python@v4
+      - uses: actions/setup-python@v4
         with:
           python-version: '3.10'
       
-      - name: Cache pip packages
-        uses: actions/cache@v3
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('backend/requirements.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-
+      - run: pip install -r backend/requirements.txt
       
-      - name: Install dependencies
-        run: pip install -r backend/requirements.txt
+      - name: Create .env file
+        run: |
+          echo "DB_USER=admin" > backend/.env
+          echo "DB_PASSWORD=admin" >> backend/.env
+          echo "DB_NAME=twitter" >> backend/.env
       
-      - name: Check formatting
-        run: black --diff --check backend/app/
+      - run: black --diff --check backend/app/
       
-      - name: Lint
-        run: flake8 --config=backend/app/config_data/.flake8 backend/app/
+      - run: flake8 --config=backend/app/config_data/.flake8 backend/app/
       
-      - name: Run tests
-        run: pytest backend/tests/
+      - run: pytest backend/tests/
+      
+      - run: mypy backend/app/ --ignore-missing-imports
