@@ -1,0 +1,26 @@
+services:
+  postgres:
+    image: postgres:15
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
+    ports:
+      - '5433:5432'
+    volumes:
+      - ./db/:/var/lib/postgresql/data
+    env_file:
+      - ./backend/.env
+
+  fastapi_app:
+    build: ./backend
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres
+    environment:
+      - REQUEST_TIMEOUT=30
+      - DB_HOST=postgres
+      - DB_PORT=5432
+    env_file:
+      - ./backend/.env

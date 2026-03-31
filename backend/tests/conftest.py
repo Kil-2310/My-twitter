@@ -14,6 +14,7 @@ TestingSessionLocal = sessionmaker(
     test_engine, class_=AsyncSession, expire_on_commit=False
 )
 
+
 @pytest_asyncio.fixture(autouse=True, scope="function")
 async def setup_database():
     """Создаёт таблицы перед каждым тестом и удаляет после"""

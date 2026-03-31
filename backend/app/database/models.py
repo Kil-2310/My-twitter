@@ -1,10 +1,9 @@
-from .database import Base
+from datetime import datetime
 
-from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
-
+from sqlalchemy import Column, DateTime, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 
-from datetime import datetime
+from .database import Base
 
 
 class User(Base):
@@ -94,6 +93,7 @@ class Tweets(Base):
     author = relationship(
         "User", back_populates="tweets", lazy="select", cascade="save-update"
     )
+
     media = relationship(
         "Media",
         secondary="tweet_media",
