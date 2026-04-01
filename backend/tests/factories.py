@@ -27,8 +27,8 @@ class FollowsFactory(factory.alchemy.SQLAlchemyModelFactory):
         sqlalchemy_session_persistence = "commit"
 
     follows_id = factory.Sequence(lambda n: n)
-    following_id = factory.SubFactory(UserFactory)
-    follower_id = factory.SubFactory(UserFactory)
+    following_id = factory.Sequence(lambda n: n)
+    follower_id = factory.Sequence(lambda n: n)
     created_at = factory.LazyFunction(
         lambda: datetime.now() - timedelta(days=random.randint(0, 180))
     )
@@ -41,10 +41,10 @@ class MediaFactory(factory.alchemy.SQLAlchemyModelFactory):
 
     media_id = factory.Sequence(lambda n: n)
     file_name = factory.LazyAttribute(
-        lambda obj: f"{factory.Faker('word').generate()}_{random.randint(1000, 9999)}.{random.choice(['jpg', 'png', 'gif', 'mp4'])}"
+        lambda obj: f"image_{obj.media_id}_{random.randint(1000, 9999)}.jpg"
     )
     file_path = factory.LazyAttribute(lambda obj: f"/uploads/{obj.file_name}")
-    uploaded_by = factory.SubFactory(UserFactory)
+    uploaded_by = factory.Sequence(lambda n: n)
     created_at = factory.LazyFunction(
         lambda: datetime.now() - timedelta(days=random.randint(0, 60))
     )
@@ -57,7 +57,7 @@ class TweetsFactory(factory.alchemy.SQLAlchemyModelFactory):
 
     tweet_id = factory.Sequence(lambda n: n)
     content = factory.Faker("text", max_nb_chars=280)
-    author_id = factory.SubFactory(UserFactory)
+    author_id = factory.Sequence(lambda n: n)
     created_at = factory.LazyFunction(
         lambda: datetime.now()
         - timedelta(days=random.randint(0, 30), hours=random.randint(0, 23))
