@@ -39,10 +39,7 @@ def create_app():
 
             if not object_users:
                 users_data = [
-                    User(name="Bob", api_key="1"),
-                    User(name="Tom", api_key="2"),
-                    User(name="Alice", api_key="3"),
-                    User(name="Kate", api_key="4"),
+                    User(name="Bob", api_key="test"),
                 ]
 
                 session.add_all(users_data)
@@ -75,7 +72,7 @@ def create_app():
             async with session.begin():
                 user = await check_auth(session, api_key)
 
-                new_tweet = Tweets(content=tweet.content, author_id=user.user_id)
+                new_tweet = Tweets(content=tweet.tweet_data, author_id=user.user_id)
 
                 if tweet.tweet_media_ids:
                     for media_id in tweet.tweet_media_ids:
@@ -132,7 +129,6 @@ def create_app():
 
             return schema.MediaResponse(
                 uploaded_by=new_media.uploaded_by,
-                created_at=new_media.created_at,
                 media_id=new_media.media_id,
             )
 
@@ -181,14 +177,14 @@ def create_app():
 
             if not total_object_tweets:
                 return schema.TweetTotalResponse(
-                    result="false",
+                    result="true",
                     tweets=[],
                 )
 
         return schema.TweetTotalResponse(
             tweets=[
                 schema.TweetsData(
-                    tweet_id=tweet.tweet_id,
+                    id=tweet.tweet_id,
                     content=tweet.content,
                     attachments=[media.file_path for media in tweet.media],
                     author=schema.User(id=tweet.author.user_id, name=tweet.author.name),
@@ -258,7 +254,7 @@ def create_app():
         return schema.ServerBoolAnswer()
 
     @app.post(
-        "/api/users/<id>/follow",
+        "/api/users/{id}/follow",
         status_code=201,
         tags=["user"],
         response_model=schema.ServerBoolAnswer,
@@ -288,7 +284,7 @@ def create_app():
         return schema.ServerBoolAnswer()
 
     @app.delete(
-        "/api/users/<id>/follow",
+        "/api/users/{id}/follow",
         status_code=200,
         tags=["user"],
         response_model=schema.ServerBoolAnswer,
@@ -341,7 +337,7 @@ def create_app():
             )
 
     @app.get(
-        "/api/users/<id>",
+        "/api/users/{id}",
         status_code=200,
         tags=["user"],
         response_model=schema.UserProfileResponse,

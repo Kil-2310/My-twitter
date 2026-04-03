@@ -54,7 +54,7 @@ class Like(BaseModel):
 class TweetCreate(BaseModel):
     """Создание твита"""
 
-    content: str
+    tweet_data: str
     tweet_media_ids: Optional[List[int]] = []
 
 
@@ -72,7 +72,7 @@ class TweetResponse(BaseModel):
 class TweetsData(BaseModel):
     """Информация о конкретном твите"""
 
-    tweet_id: int
+    id: int
     content: str
     attachments: Optional[List[str]] = []
     author: User
@@ -98,6 +98,3 @@ class MediaResponse(BaseModel):
     result: str = "true"
     uploaded_by: int
     media_id: int
-    created_at: datetime
-
-    model_config = {"from_attributes": True}
