@@ -1,15 +1,11 @@
 import os
-from pathlib import Path
+from dotenv import load_dotenv, find_dotenv
 
-from dotenv import load_dotenv
 
-find_dir = Path(__file__).parent.parent.parent
-env_path = find_dir / ".env"
-
-if env_path.exists():
-    load_dotenv(dotenv_path=env_path)
+if not find_dotenv():
+    exit("Переменные окружения не загружены т.к отсутствует файл .env")
 else:
-    exit(f"Файл .env не найден по пути: {env_path}")
+    load_dotenv()
 
 DB_USER = os.getenv("DB_USER")
 DB_PASSWORD = os.getenv("DB_PASSWORD")
