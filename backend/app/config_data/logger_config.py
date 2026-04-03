@@ -4,10 +4,10 @@ from loguru import logger
 
 logger.remove()
 
-os.makedirs("backend/logs", exist_ok=True)
+os.makedirs("logs", exist_ok=True)
 
 logger.add(
-    "backend/logs/app_{time:YYYY-MM-DD}.log",
+    "logs/app_{time:YYYY-MM-DD}.log",
     format="{time:HH:mm:ss} | {level} | {message}",
     level="DEBUG",
     rotation="10 MB",

@@ -3,7 +3,7 @@ import uuid
 from pathlib import Path
 
 import aiofiles
-from fastapi import FastAPI, File, UploadFile
+from fastapi import FastAPI, File, UploadFile, Header
 from sqlalchemy import select
 
 from ..config_data.logger_config import logger
@@ -67,7 +67,8 @@ def create_app():
         summary="Создание нового твита",
     )
     async def rout_create_tweet(
-        api_key: str, tweet: schema.TweetCreate
+        tweet: schema.TweetCreate,
+        api_key: str = Header(..., description="API-ключ пользователя"),
     ) -> schema.TweetResponse:
         """Создание нового твита"""
         async with async_session() as session:
@@ -98,7 +99,7 @@ def create_app():
         summary="Создание медиа через загрузку файла",
     )
     async def rout_create_media(
-        api_key: str,
+        api_key: str = Header(..., description="API-ключ пользователя"),
         file: UploadFile = File(..., description="Выберете медиафайл для загрузки"),
     ) -> schema.MediaResponse:
         """Создание нового медиа"""
@@ -147,7 +148,10 @@ def create_app():
         response_model=schema.ServerBoolAnswer,
         summary="Удаление твита",
     )
-    async def rout_delete_tweet(api_key: str, id: int):
+    async def rout_delete_tweet(
+        id: int,
+        api_key: str = Header(..., description="API-ключ пользователя"),
+    ):
         """Удаление твита"""
         async with async_session() as session:
             async with session.begin():
@@ -166,7 +170,9 @@ def create_app():
         response_model=schema.TweetTotalResponse,
         summary="Получение всех твитов",
     )
-    async def rout_get_tweets(api_key: str):
+    async def rout_get_tweets(
+        api_key: str = Header(..., description="API-ключ пользователя"),
+    ):
         """Получение всех твитов"""
         async with async_session() as session:
             await check_auth(session, api_key)
@@ -205,7 +211,10 @@ def create_app():
         response_model=schema.ServerBoolAnswer,
         summary="Поставить лайк на твит",
     )
-    async def rout_create_like_tweet(api_key: str, id: int):
+    async def rout_create_like_tweet(
+        id: int,
+        api_key: str = Header(..., description="API-ключ пользователя"),
+    ):
         """Создание лайка"""
         async with async_session() as session:
             async with session.begin():
@@ -229,7 +238,10 @@ def create_app():
         response_model=schema.ServerBoolAnswer,
         summary="Убрать отметку нравится с твита",
     )
-    async def rout_delete_like_tweet(api_key: str, id: int):
+    async def rout_delete_like_tweet(
+        id: int,
+        api_key: str = Header(..., description="API-ключ пользователя"),
+    ):
         """Удаление лайка"""
         async with async_session() as session:
             async with session.begin():
@@ -252,7 +264,10 @@ def create_app():
         response_model=schema.ServerBoolAnswer,
         summary="Подписаться на пользователя",
     )
-    async def rout_create_follow(api_key: str, id: int):
+    async def rout_create_follow(
+        id: int,
+        api_key: str = Header(..., description="API-ключ пользователя"),
+    ):
         """Подписка на пользователя"""
         async with async_session() as session:
             async with session.begin():
@@ -279,7 +294,10 @@ def create_app():
         response_model=schema.ServerBoolAnswer,
         summary="Отписка от пользователя",
     )
-    async def rout_delete_follow(api_key: str, id: int):
+    async def rout_delete_follow(
+        id: int,
+        api_key: str = Header(..., description="API-ключ пользователя"),
+    ):
         """Отписка от пользователя"""
         async with async_session() as session:
             async with session.begin():
@@ -302,7 +320,9 @@ def create_app():
         response_model=schema.UserProfileResponse,
         summary="Получение данных профиля",
     )
-    async def route_get_me(api_key: str):
+    async def route_get_me(
+        api_key: str = Header(..., description="API-ключ пользователя"),
+    ):
         """Получение данных профиля"""
         async with async_session() as session:
             user = await check_auth(session, api_key)
@@ -327,7 +347,10 @@ def create_app():
         response_model=schema.UserProfileResponse,
         summary="Получение данных стороннего пользователя",
     )
-    async def route_get_user(api_key: str, id: int):
+    async def route_get_user(
+        id: int,
+        api_key: str = Header(..., description="API-ключ пользователя"),
+    ):
         """Получение данных стороннего пользователя"""
         async with async_session() as session:
             await check_auth(session, api_key)
