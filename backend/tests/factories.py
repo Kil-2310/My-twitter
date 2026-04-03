@@ -70,8 +70,8 @@ class TweetMediaFactory(factory.alchemy.SQLAlchemyModelFactory):
         sqlalchemy_session_persistence = "commit"
 
     tweet_media_id = factory.Sequence(lambda n: n)
-    tweet_id = factory.SubFactory(TweetsFactory)
-    media_id = factory.SubFactory(MediaFactory)
+    tweet_id = factory.Sequence(lambda n: n)
+    media_id = factory.Sequence(lambda n: n)
 
 
 class LikesFactory(factory.alchemy.SQLAlchemyModelFactory):
@@ -79,9 +79,8 @@ class LikesFactory(factory.alchemy.SQLAlchemyModelFactory):
         model = Likes
         sqlalchemy_session_persistence = "commit"
 
-    like_id = factory.Sequence(lambda n: n)
-    tweet_id = factory.SubFactory(TweetsFactory)
-    user_id = factory.SubFactory(UserFactory)
+    tweet_id = factory.Sequence(lambda n: n)
+    user_id = factory.Sequence(lambda n: n)
     created_at = factory.LazyFunction(
         lambda: datetime.now() - timedelta(days=random.randint(0, 60))
     )

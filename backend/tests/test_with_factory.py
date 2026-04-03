@@ -1,5 +1,5 @@
 import pytest
-from .factories import UserFactory, TweetsFactory, MediaFactory
+from .factories import UserFactory, TweetsFactory, MediaFactory, LikesFactory
 from sqlalchemy import select
 from backend.app.database.models import Tweets, User
 
@@ -138,6 +138,39 @@ async def test_follow(db_session, test_user_1, test_user_2):
     assert test_user_2 in test_user_1.following
     assert test_user_1 in test_user_2.followers
 
+
+async def test_create_like(db_session, test_user_1, test_tweet_1):
+    """Тест создания отметки нравится"""
+    like = LikesFactory.build()
+
+    like.tweet = test_tweet_1
+    like.user = test_user_1
+
+    db_session.add(like)
+    await db_session.commit()
+    await db_session.refresh(like)
+
+    assert like.tweet_id is not None
+    assert like.user_id is not None
+
+async def test_delete_like(db_session, test_user_1, test_tweet_1):
+    like = LikesFactory.build()
+
+    like.tweet = test_tweet_1
+    like.user = test_user_1
+
+    db_session.add(like)
+    await db_session.commit()
+    await db_session.refresh(like)
+
+    assert like.tweet_id is not None
+    assert like.user_id is not None
+
+    like.user = None
+    like.tweet = None
+
+    assert like.user is None
+    assert like.tweet is None
 
 async def test_unfollow(db_session, test_user_1, test_user_2):
     """Тест отписки"""
