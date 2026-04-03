@@ -22,5 +22,3 @@ services:
       - REQUEST_TIMEOUT=30
       - DB_HOST=postgres
       - DB_PORT=5432
-    env_file:
-      - ./backend/.env
