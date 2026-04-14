@@ -29,7 +29,7 @@ class ManagerTweets:
         result = await session.execute(
             select(Tweets).options(
                 selectinload(Tweets.author),
-                selectinload(Tweets.likes),
+                selectinload(Tweets.likes).selectinload(Likes.user),
                 selectinload(Tweets.media),
             )
         )
