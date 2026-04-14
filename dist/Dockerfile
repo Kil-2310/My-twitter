@@ -2,7 +2,7 @@ FROM nginx:alpine
 
 COPY ./css /usr/share/nginx/html/css
 COPY ./js /usr/share/nginx/html/js
-COPY ./favicon.ico /usr/share/nginx/html/favicon
+COPY ./favicon.ico /usr/share/nginx/html/favicon.ico
 
 COPY ./index.html /usr/share/nginx/html/index.html
 
