@@ -1,0 +1,45 @@
+services:
+  postgres:
+    image: postgres:15
+    environment:
+      - POSTGRES_USER={DB_USER}
+      - POSTGRES_PASSWORD={DB_PASSWORD}
+      - POSTGRES_DB={DB_NAME}
+    ports:
+      - '5433:5432'
+    volumes:
+      - ./db/:/var/lib/postgresql/data
+    networks:
+      - app_network
+    env_file:
+      - ./backend/.env
+
+  backend:
+    build: ./backend
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres
+    volumes:
+      - uploads_data:/app/backend/app/api/uploads
+    networks:
+      - app_network
+
+  frontend:
+    build: ./dist
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    volumes:
+      - uploads_data:/app/backend/app/api/uploads
+    networks:
+      - app_network
+
+volumes:
+  uploads_data:
+    driver: local
+
+networks:
+  app_network:
+    driver: bridge

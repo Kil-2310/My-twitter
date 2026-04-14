@@ -9,8 +9,12 @@ node_modules
 # .vscode
 .vscode/
 
+#logs
+logs/
+
 # C extensions
 *.so
+*.db
 
 # Distribution / packaging
 .Python
@@ -110,7 +114,7 @@ celerybeat.pid
 *.sage.py
 
 # Environments
-.env
+backend/.env
 .venv
 env/
 venv/
