@@ -5,7 +5,7 @@ from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker
 
 from backend.app.database.database import Base
-from backend.app.api.routes import create_app
+from backend.app.api.register_routes import create_app
 
 TEST_DATABASE_URL = "sqlite+aiosqlite:///./test.db"
 

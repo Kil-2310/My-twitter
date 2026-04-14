@@ -1,8 +1,6 @@
 from fastapi import HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
-
 from ..database import ManagerUser, User
-
 
 async def check_auth(session: AsyncSession, api_key: str) -> User:
     """Проверка api key и проверка наличия пользователя в БД"""

@@ -1,11 +1,11 @@
 from typing import List
-
-from fastapi import HTTPException
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
+from fastapi import HTTPException
 
 from .models import Likes, Media, Tweets, User
+from ..config_data.logger_config import logger
 
 
 class ManagerTweets:
@@ -19,7 +19,15 @@ class ManagerTweets:
         obj = result.scalar_one_or_none()
 
         if not obj:
-            raise HTTPException(status_code=404, detail="Tweet not found")
+            logger.error('Твит {} не найден'.format(tweet_id))
+            raise HTTPException(
+                status_code=404,
+                detail={
+                    "result": False,
+                    "error_type": "not_found",
+                    "error_message": "Tweet not found"
+                }
+            )
 
         return obj
 
@@ -33,8 +41,10 @@ class ManagerTweets:
                 selectinload(Tweets.media),
             )
         )
+        objs = list(result.unique().scalars().all())
+        logger.info('Получено {} твитов'.format(len(objs)))
 
-        return list(result.unique().scalars().all())
+        return objs
 
 
 class ManagerUser:
@@ -50,8 +60,17 @@ class ManagerUser:
         obj = result.scalar_one_or_none()
 
         if not obj:
-            raise HTTPException(status_code=404, detail="User not found")
+            logger.error('Пользователь с api_key {} не найден'.format(api_key))
+            raise HTTPException(
+                status_code=404,
+                detail={
+                    "result": False,
+                    "error_type": "not_found",
+                    "error_message": "User not found"
+                }
+            )
 
+        logger.info('Пользователь {} авторизован'.format(obj.name))
         return obj
 
     @classmethod
@@ -65,35 +84,65 @@ class ManagerUser:
         obj = result.scalar_one_or_none()
 
         if not obj:
-            raise HTTPException(status_code=404, detail="User not found")
+            logger.error('Пользователь {} не найден'.format(user_id))
+            raise HTTPException(
+                status_code=404,
+                detail={
+                    "result": False,
+                    "error_type": "not_found",
+                    "error_message": "User not found"
+                }
+            )
 
         return obj
 
     @classmethod
-    def check_subscribe_yourself(
-        cls, session: AsyncSession, user_id: int, follow_id: int
-    ) -> None:
-
+    def check_subscribe_yourself(cls, user_id: int, follow_id: int) -> None:
+        """Проверка подписки на себя"""
         if user_id == follow_id:
+            logger.error('Попытка подписаться на себя user_id={}'.format(user_id))
             raise HTTPException(
-                status_code=409, detail="Conflict subscribe to yourself"
+                status_code=409,
+                detail={
+                    "result": False,
+                    "error_type": "conflict",
+                    "error_message": "Cannot subscribe to yourself"
+                }
             )
 
     @classmethod
-    def check_exists_following(
-        cls, session: AsyncSession, user: User, object_user: int
-    ) -> None:
+    def check_exists_following(cls, user: User, target_user_id: int) -> None:
         """Проверка наличия подписки"""
-        if object_user in user.following:
-            raise HTTPException(status_code=409, detail="Already subscribe")
+        following_ids = [f.user_id for f in user.following]
+        if target_user_id in following_ids:
+            logger.error('Подписка уже существует user={} follow={}'.format(
+                user.user_id, target_user_id
+            ))
+            raise HTTPException(
+                status_code=409,
+                detail={
+                    "result": False,
+                    "error_type": "conflict",
+                    "error_message": "Already subscribed"
+                }
+            )
 
     @classmethod
-    def check_empty_following(
-        cls, session: AsyncSession, user: User, object_user: int
-    ) -> None:
+    def check_empty_following(cls, user: User, target_user_id: int) -> None:
         """Проверка отсутствия подписки"""
-        if object_user not in user.following:
-            raise HTTPException(status_code=409, detail="Not subscribe")
+        following_ids = [f.user_id for f in user.following]
+        if target_user_id not in following_ids:
+            logger.error('Подписка не найдена user={} follow={}'.format(
+                user.user_id, target_user_id
+            ))
+            raise HTTPException(
+                status_code=409,
+                detail={
+                    "result": False,
+                    "error_type": "conflict",
+                    "error_message": "Not subscribed"
+                }
+            )
 
 
 class ManagerLikes:
@@ -109,7 +158,15 @@ class ManagerLikes:
         obj = result.scalar_one_or_none()
 
         if not obj:
-            raise HTTPException(status_code=404, detail="Like not found")
+            logger.error('Лайк не найден user={} tweet={}'.format(user_id, tweet_id))
+            raise HTTPException(
+                status_code=404,
+                detail={
+                    "result": False,
+                    "error_type": "not_found",
+                    "error_message": "Like not found"
+                }
+            )
 
         return obj
 
@@ -123,6 +180,14 @@ class ManagerMedia:
         obj = result.scalar_one_or_none()
 
         if not obj:
-            raise HTTPException(status_code=404, detail="Media not found")
+            logger.error('Медиа {} не найдено'.format(media_id))
+            raise HTTPException(
+                status_code=404,
+                detail={
+                    "result": False,
+                    "error_type": "not_found",
+                    "error_message": "Media not found"
+                }
+            )
 
         return obj
