@@ -27,4 +27,4 @@ jobs:
       
       - run: flake8 --config=backend/app/config_data/.flake8 backend/app/
       
-      - run: pytest backend/tests/
+      - run: pytest backend/tests/ -v
