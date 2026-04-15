@@ -3,13 +3,14 @@ import uuid
 from pathlib import Path
 
 import aiofiles
-from fastapi import Depends, File, UploadFile, Header
+from fastapi import Depends, File, Header, UploadFile
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..config_data.logger_config import logger
 from ..database import Media, get_session
 from ..schemas import schemas as schema
 from ..utils.auth import check_auth
+
 
 def register_media_routes(app):
     @app.post(
@@ -32,6 +33,9 @@ def register_media_routes(app):
         current_file_path = Path(__file__).parent
         UPLOAD_DIR = current_file_path / "uploads"
         UPLOAD_DIR.mkdir(exist_ok=True)
+
+        if file.filename is None:
+            raise
 
         file_extension = os.path.splitext(file.filename)[1]
         unique_filename = f"{uuid.uuid4().hex}{file_extension}"

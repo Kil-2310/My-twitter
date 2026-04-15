@@ -2,23 +2,19 @@ from fastapi import FastAPI
 from sqlalchemy import select
 
 from ..config_data.logger_config import logger
-from ..database import (
-    Base,
-    User,
-    async_session,
-    engine,
-)
-
-from .user_routes import register_user_routes
-from .tweet_routes import register_tweet_routes
-from .media_routes import register_media_routes
+from ..database import Base, User, async_session, engine
 from .likes_routes import register_like_routes
+from .media_routes import register_media_routes
+from .tweet_routes import register_tweet_routes
+from .user_routes import register_user_routes
+
 
 def register_routes(app: FastAPI):
     register_user_routes(app)
     register_tweet_routes(app)
     register_media_routes(app)
     register_like_routes(app)
+
 
 def create_app():
     app = FastAPI()
@@ -49,7 +45,6 @@ def create_app():
         await async_session.close()
         await engine.dispose()
         logger.debug("Сессия завершена")
-
 
     register_routes(app)
 

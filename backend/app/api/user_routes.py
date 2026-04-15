@@ -6,6 +6,7 @@ from ..database import ManagerUser, get_session
 from ..schemas import schemas as schema
 from ..utils.auth import check_auth
 
+
 def register_user_routes(app):
     @app.post(
         "/api/users/{id}/follow",

@@ -2,9 +2,10 @@ from fastapi import Depends, Header
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..config_data.logger_config import logger
-from ..database import ManagerLikes, get_session, ManagerTweets, Likes
+from ..database import Likes, ManagerLikes, ManagerTweets, get_session
 from ..schemas import schemas as schema
 from ..utils.auth import check_auth
+
 
 def register_like_routes(app):
     @app.post(

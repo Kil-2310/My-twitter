@@ -1,11 +1,12 @@
 from typing import List
+
+from fastapi import HTTPException
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
-from fastapi import HTTPException
 
-from .models import Likes, Media, Tweets, User
 from ..config_data.logger_config import logger
+from .models import Likes, Media, Tweets, User
 
 
 class ManagerTweets:
@@ -19,14 +20,14 @@ class ManagerTweets:
         obj = result.scalar_one_or_none()
 
         if not obj:
-            logger.error('Твит {} не найден'.format(tweet_id))
+            logger.error("Твит {} не найден".format(tweet_id))
             raise HTTPException(
                 status_code=404,
                 detail={
                     "result": False,
                     "error_type": "not_found",
-                    "error_message": "Tweet not found"
-                }
+                    "error_message": "Tweet not found",
+                },
             )
 
         return obj
@@ -42,7 +43,7 @@ class ManagerTweets:
             )
         )
         objs = list(result.unique().scalars().all())
-        logger.info('Получено {} твитов'.format(len(objs)))
+        logger.info("Получено {} твитов".format(len(objs)))
 
         return objs
 
@@ -60,17 +61,17 @@ class ManagerUser:
         obj = result.scalar_one_or_none()
 
         if not obj:
-            logger.error('Пользователь с api_key {} не найден'.format(api_key))
+            logger.error("Пользователь с api_key {} не найден".format(api_key))
             raise HTTPException(
                 status_code=404,
                 detail={
                     "result": False,
                     "error_type": "not_found",
-                    "error_message": "User not found"
-                }
+                    "error_message": "User not found",
+                },
             )
 
-        logger.info('Пользователь {} авторизован'.format(obj.name))
+        logger.info("Пользователь {} авторизован".format(obj.name))
         return obj
 
     @classmethod
@@ -84,14 +85,14 @@ class ManagerUser:
         obj = result.scalar_one_or_none()
 
         if not obj:
-            logger.error('Пользователь {} не найден'.format(user_id))
+            logger.error("Пользователь {} не найден".format(user_id))
             raise HTTPException(
                 status_code=404,
                 detail={
                     "result": False,
                     "error_type": "not_found",
-                    "error_message": "User not found"
-                }
+                    "error_message": "User not found",
+                },
             )
 
         return obj
@@ -100,14 +101,14 @@ class ManagerUser:
     def check_subscribe_yourself(cls, user_id: int, follow_id: int) -> None:
         """Проверка подписки на себя"""
         if user_id == follow_id:
-            logger.error('Попытка подписаться на себя user_id={}'.format(user_id))
+            logger.error("Попытка подписаться на себя user_id={}".format(user_id))
             raise HTTPException(
                 status_code=409,
                 detail={
                     "result": False,
                     "error_type": "conflict",
-                    "error_message": "Cannot subscribe to yourself"
-                }
+                    "error_message": "Cannot subscribe to yourself",
+                },
             )
 
     @classmethod
@@ -115,16 +116,18 @@ class ManagerUser:
         """Проверка наличия подписки"""
         following_ids = [f.user_id for f in user.following]
         if target_user_id in following_ids:
-            logger.error('Подписка уже существует user={} follow={}'.format(
-                user.user_id, target_user_id
-            ))
+            logger.error(
+                "Подписка уже существует user={} follow={}".format(
+                    user.user_id, target_user_id
+                )
+            )
             raise HTTPException(
                 status_code=409,
                 detail={
                     "result": False,
                     "error_type": "conflict",
-                    "error_message": "Already subscribed"
-                }
+                    "error_message": "Already subscribed",
+                },
             )
 
     @classmethod
@@ -132,16 +135,18 @@ class ManagerUser:
         """Проверка отсутствия подписки"""
         following_ids = [f.user_id for f in user.following]
         if target_user_id not in following_ids:
-            logger.error('Подписка не найдена user={} follow={}'.format(
-                user.user_id, target_user_id
-            ))
+            logger.error(
+                "Подписка не найдена user={} follow={}".format(
+                    user.user_id, target_user_id
+                )
+            )
             raise HTTPException(
                 status_code=409,
                 detail={
                     "result": False,
                     "error_type": "conflict",
-                    "error_message": "Not subscribed"
-                }
+                    "error_message": "Not subscribed",
+                },
             )
 
 
@@ -158,14 +163,14 @@ class ManagerLikes:
         obj = result.scalar_one_or_none()
 
         if not obj:
-            logger.error('Лайк не найден user={} tweet={}'.format(user_id, tweet_id))
+            logger.error("Лайк не найден user={} tweet={}".format(user_id, tweet_id))
             raise HTTPException(
                 status_code=404,
                 detail={
                     "result": False,
                     "error_type": "not_found",
-                    "error_message": "Like not found"
-                }
+                    "error_message": "Like not found",
+                },
             )
 
         return obj
@@ -180,14 +185,14 @@ class ManagerMedia:
         obj = result.scalar_one_or_none()
 
         if not obj:
-            logger.error('Медиа {} не найдено'.format(media_id))
+            logger.error("Медиа {} не найдено".format(media_id))
             raise HTTPException(
                 status_code=404,
                 detail={
                     "result": False,
                     "error_type": "not_found",
-                    "error_message": "Media not found"
-                }
+                    "error_message": "Media not found",
+                },
             )
 
         return obj
