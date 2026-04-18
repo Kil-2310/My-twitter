@@ -21,7 +21,7 @@ services:
     depends_on:
       - postgres
     volumes:
-      - uploads_data:/app/backend/app/api/uploads
+      - uploads_data:/backend/app/api/uploads
     networks:
       - app_network
 
@@ -32,7 +32,7 @@ services:
     depends_on:
       - backend
     volumes:
-      - uploads_data:/app/backend/app/api/uploads
+      - uploads_data:/backend/app/api/uploads
     networks:
       - app_network
 
