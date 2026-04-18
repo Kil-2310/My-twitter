@@ -10,6 +10,7 @@ from backend.app.api.register_routes import create_app
 TEST_DATABASE_URL = "sqlite+aiosqlite:///./test.db"
 
 test_engine = create_async_engine(TEST_DATABASE_URL, echo=True)
+
 TestingSessionLocal = sessionmaker(
     test_engine, class_=AsyncSession, expire_on_commit=False
 )

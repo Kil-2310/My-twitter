@@ -50,7 +50,7 @@ async def test_media_1(db_session):
 # Сами тесты
 
 
-async def test_create_user(db_session):
+async def test_create_user(setup_database, db_session):
     """Создание пользователя"""
     user = UserFactory.build()
 
@@ -63,7 +63,7 @@ async def test_create_user(db_session):
     assert user.created_at is not None
 
 
-async def test_create_tweet(db_session):
+async def test_create_tweet(setup_database, db_session):
     """Создание твита"""
     tweet = TweetsFactory.build()
 
@@ -73,7 +73,7 @@ async def test_create_tweet(db_session):
 
     assert tweet.tweet_id is not None
 
-async def test_get_tweets_default_0(db_session):
+async def test_get_tweets_default_0(setup_database, db_session):
     """Получение всех твитов из БД"""
     result = await db_session.execute(
         select(Tweets)
@@ -83,7 +83,7 @@ async def test_get_tweets_default_0(db_session):
     assert len(tweets) == 0
 
 
-async def test_get_tweets_default_1(db_session, test_tweet_1):
+async def test_get_tweets_default_1(setup_database, db_session, test_tweet_1):
     """Получение всех твитов из БД"""
     result = await db_session.execute(
         select(Tweets)
@@ -93,7 +93,7 @@ async def test_get_tweets_default_1(db_session, test_tweet_1):
     assert len(tweets) == 1
 
 
-async def test_delete_tweet(db_session, test_tweet_1):
+async def test_delete_tweet(setup_database, db_session, test_tweet_1):
     """Удаление твита"""
     await db_session.delete(test_tweet_1)
 
@@ -105,7 +105,7 @@ async def test_delete_tweet(db_session, test_tweet_1):
     assert len(tweets) == 0
 
 
-async def test_create_media(db_session):
+async def test_create_media(setup_database, db_session):
     """Создание медиа"""
     media = MediaFactory.build()
 
@@ -116,7 +116,7 @@ async def test_create_media(db_session):
     assert media.media_id is not None
 
 
-async def test_tweet_media(db_session, test_media_1, test_tweet_1):
+async def test_tweet_media(setup_database, db_session, test_media_1, test_tweet_1):
     """Создание твита и првязка к нему медиа"""
     test_tweet_1.media.append(test_media_1)
     await db_session.commit()
@@ -127,7 +127,7 @@ async def test_tweet_media(db_session, test_media_1, test_tweet_1):
     assert test_media_1 in test_tweet_1.media
 
 
-async def test_follow(db_session, test_user_1, test_user_2):
+async def test_follow(setup_database, db_session, test_user_1, test_user_2):
     """Тест подписки"""
     test_user_1.following.append(test_user_2)
     await db_session.commit()
@@ -139,7 +139,7 @@ async def test_follow(db_session, test_user_1, test_user_2):
     assert test_user_1 in test_user_2.followers
 
 
-async def test_create_like(db_session, test_user_1, test_tweet_1):
+async def test_create_like(setup_database, db_session, test_user_1, test_tweet_1):
     """Тест создания отметки нравится"""
     like = LikesFactory.build()
 
@@ -153,7 +153,7 @@ async def test_create_like(db_session, test_user_1, test_tweet_1):
     assert like.tweet_id is not None
     assert like.user_id is not None
 
-async def test_delete_like(db_session, test_user_1, test_tweet_1):
+async def test_delete_like(setup_database, db_session, test_user_1, test_tweet_1):
     like = LikesFactory.build()
 
     like.tweet = test_tweet_1
@@ -172,7 +172,7 @@ async def test_delete_like(db_session, test_user_1, test_tweet_1):
     assert like.user is None
     assert like.tweet is None
 
-async def test_unfollow(db_session, test_user_1, test_user_2):
+async def test_unfollow(setup_database, db_session, test_user_1, test_user_2):
     """Тест отписки"""
     test_user_1.following.append(test_user_2)
     await db_session.commit()
@@ -192,7 +192,7 @@ async def test_unfollow(db_session, test_user_1, test_user_2):
     assert len(test_user_2.followers) == 0
 
 
-async def test_get_my_profile(db_session, test_user_1):
+async def test_get_my_profile(setup_database, db_session, test_user_1):
     """Получение профиля пользователя"""
     result = await db_session.execute(
         select(User).where(User.user_id == test_user_1.user_id)

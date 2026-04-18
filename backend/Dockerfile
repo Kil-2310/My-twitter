@@ -7,8 +7,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY ./.env* ./
 
-COPY ./main.py main.py
-COPY ./loader.py loader.py
-COPY ./app app
+COPY ./main.py ./main.py
+COPY ./loader.py ./loader.py
+COPY ./app ./app
 
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]

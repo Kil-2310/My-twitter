@@ -9,8 +9,11 @@ node_modules
 # .vscode
 .vscode/
 
-#logs
+# logs
 logs/
+
+# config database
+db/
 
 # C extensions
 *.so
